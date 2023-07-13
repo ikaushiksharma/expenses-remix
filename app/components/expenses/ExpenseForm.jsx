@@ -24,7 +24,6 @@ function ExpenseForm() {
     return <p>Invalid expense id.</p>;
   }
 
-
   const defaultValues = expenseData
     ? {
         title: expenseData.title,
