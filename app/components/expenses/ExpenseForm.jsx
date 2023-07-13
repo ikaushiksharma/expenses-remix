@@ -6,19 +6,24 @@ import {
   useMatches,
   useParams,
   useNavigation,
-} from '@remix-run/react';
+} from "@remix-run/react";
 
 function ExpenseForm() {
+  const navigation = useNavigation();
+
   const today = new Date().toISOString().slice(0, 10); // yields something like 2023-09-10
   const validationErrors = useActionData();
   // const expenseData = useLoaderData();
   const params = useParams();
   const matches = useMatches();
-  const expenses = matches.find(
-    (match) => match.id === 'routes/__app/expenses'
-  ).data;
+  const expenses = matches.find((match) => match.id === "routes/__app/expenses").data;
   const expenseData = expenses.find((expense) => expense.id === params.id);
-  const navigation = useNavigation();
+
+  if (params.id && !expenseData) {
+    // throw new Response();
+    return <p>Invalid expense id.</p>;
+  }
+
 
   const defaultValues = expenseData
     ? {
@@ -27,12 +32,12 @@ function ExpenseForm() {
         date: expenseData.date,
       }
     : {
-        title: '',
-        amount: '',
-        date: '',
+        title: "",
+        amount: "",
+        date: "",
       };
 
-  const isSubmitting = navigation.state !== 'idle';
+  const isSubmitting = navigation.state !== "idle";
 
   // const submit = useSubmit();
 
@@ -48,7 +53,7 @@ function ExpenseForm() {
 
   return (
     <Form
-      method={expenseData ? 'patch' : 'post'}
+      method={expenseData ? "patch" : "post"}
       className="form"
       id="expense-form"
       // onSubmit={submitHandler}
@@ -86,9 +91,7 @@ function ExpenseForm() {
             name="date"
             max={today}
             required
-            defaultValue={
-              defaultValues.date ? defaultValues.date.slice(0, 10) : ''
-            }
+            defaultValue={defaultValues.date ? defaultValues.date.slice(0, 10) : ""}
           />
         </p>
       </div>
@@ -100,9 +103,7 @@ function ExpenseForm() {
         </ul>
       )}
       <div className="form-actions">
-        <button disabled={isSubmitting}>
-          {isSubmitting ? 'Saving...' : 'Save Expense'}
-        </button>
+        <button disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Save Expense"}</button>
         <Link to="..">Cancel</Link>
       </div>
     </Form>
