@@ -1,9 +1,9 @@
-import { redirect } from "@remix-run/node";
+import { redirect } from '@remix-run/node';
 
-import AuthForm from "~/components/auth/AuthForm";
-import { login, signup } from "~/data/auth.server";
-import { validateCredentials } from "~/data/validation.server";
-import authStyles from "~/styles/auth.css";
+import AuthForm from '~/components/auth/AuthForm';
+import { login, signup } from '~/data/auth.server';
+import { validateCredentials } from '~/data/validation.server';
+import authStyles from '~/styles/auth.css';
 
 export default function AuthPage() {
   return <AuthForm />;
@@ -11,7 +11,7 @@ export default function AuthPage() {
 
 export async function action({ request }) {
   const searchParams = new URL(request.url).searchParams;
-  const authMode = searchParams.get("mode") || "login";
+  const authMode = searchParams.get('mode') || 'login';
 
   const formData = await request.formData();
   const credentials = Object.fromEntries(formData);
@@ -23,7 +23,7 @@ export async function action({ request }) {
   }
 
   try {
-    if (authMode === "login") {
+    if (authMode === 'login') {
       return await login(credentials);
     } else {
       return await signup(credentials);
@@ -33,9 +33,18 @@ export async function action({ request }) {
       return { credentials: error.message };
     }
   }
-  return null;
 }
 
 export function links() {
-  return [{ rel: "stylesheet", href: authStyles }];
+  return [{ rel: 'stylesheet', href: authStyles }];
+}
+
+export function headers({
+  actionHeaders,
+  loaderHeaders,
+  parentHeaders
+}) {
+  return {
+    'Cache-Control': parentHeaders.get('Cache-Control') // 60 minutes
+  }
 }
